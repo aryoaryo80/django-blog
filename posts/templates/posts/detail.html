@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load posts_extras %}
+
+
+{% block content %}
+    
+    {% if request.user == post.user %}
+      <a class="btn btn-primary" href="{% url 'posts:post_update' post.id %}">Update</a>
+      <a class="btn btn-danger" href="{% url 'posts:post_delete' post.id %}">Delete</a><br><br>
+    {% endif %}
+      
+    <p class="font-monospace">This Post By <a class="fw-bold" href="{{ post.get_user_profile_url }}">{{ post.user.username }}</a> - {{ post.created|timesince }} Ago</p>
+    <h6 class="card-subtitle mb-2">{{ post.likes_count }}</h6><br>
+    <p class="text-center fw-bold">{{ post.title }}</p><br><br>
+    <p class="lh-base">{{ post.content|safe }}</p>
+    <br><br>
+    
+    
+    {% if  post|check_liked:request.user  %} 
+      <a class="btn btn-primary" href="{% url 'posts:post_like' post.id %}">{{post.votes.count}} Unlike</a><br><br>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'posts:post_like' post.id %}">{{post.votes.count}} Like</a><br><br>
+    {% endif %}
+      
+    
+    
+    {% with comments.count as count %}
+      
+    {% if comments.count > 0 %}
+    <form class="col-md-3" action="" method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <p>
+        {{ form.content.errors }}
+        <label for="{{ form.content.id_for_label}}">Comment:</label>
+        {{ form.content }}
+      </p>
+      <br>
+      <input class="btn btn-success" type="submit" value="Send">
+    </form><br>
+    <p>total comments: {{ comments.count }}</p><br>
+    {% for comment in comments %}
+
+    <div class="card text-bg-success col-md-3 mb-sm-4">
+      <div class="card-header">
+        {{ comment.user.username }} - {{ comment.created|timesince }}
+      </div>
+      <div class="card-body">
+        <blockquote class="blockquote mb-1">
+          <p>{{ comment.content }}</p>
+          {% if  comment|check_liked:request.user  %} 
+              <a class="btn btn-primary" href="{% url 'posts:comment_like' comment.id %}">{{comment.likes_count}} Unlike</a><br>
+          {% else %}
+              <a class="btn btn-primary" href="{% url 'posts:comment_like' comment.id %}">{{comment.likes_count}} Like</a><br>
+          {% endif %}
+        </blockquote><br>
+        {% for nested in comment.nested.all %}
+        <div class="card text-bg-dark mb-sm-2">
+          <div class="card-header">
+            {{ nested.user.username }} - {{ nested.created|timesince }}
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-sm-1">
+              <p>{{ nested.content }}</p>
+              {% if  nested|check_liked:request.user  %} 
+                  <a class="btn btn-primary" href="{% url 'posts:comment_like' nested.id %}">{{nested.likes_count}} Unlike</a><br>
+              {% else %}
+                  <a class="btn btn-primary" href="{% url 'posts:comment_like' nested.id %}">{{nested.likes_count}} Like</a><br>
+              {% endif %}
+            </blockquote>
+          </div>
+        </div>
+          
+        {% endfor %}
+            
+            <form class="col-md-13 mb-sm" action="" method="post">
+              {% csrf_token %}
+              {{ nform.non_field_errors }}
+              <p>
+                {{ nform.body.errors }}
+                <label for="{{ form.content.id_for_label}}">Reply:</label>
+                {{ nform.body }}
+              </p>
+              <p>
+                <input type="hidden" name="comment_id" id="id_comment_id" value="{{comment.id}}">
+              </p>
+              <input class="btn btn-info" type="submit" value="Send">
+            </form>
+        
+          
+
+      </div>
+    </div>
+    {% endfor %}
+    
+    {% else %}
+    <p>No comment</p>
+    <form class="col-md-3" action="" method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <p>
+        {{ form.content.errors }}
+        <label for="{{ form.content.id_for_label}}">Comment:</label>
+        {{ form.content }}
+      </p>
+      <br>
+      <input class="btn btn-success" type="submit" value="Send">
+    </form><br>
+    {% endif %}
+    {% endwith %}
+
+        
+{% endblock content %}

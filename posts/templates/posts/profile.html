@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h3 class="text-center fw-bold">{{ user_instance.username }} Profile</h3>
+    
+    {% if user_instance.full_name %}
+    <h3 class="">{{ user_instance.full_name }}</h3>
+    {% endif %}
+        
+    <br>
+    <h3 class="">{% if user_instance.biography %}{{ user_instance.biography }}{% endif %}</h3>
+
+    <br><br><h3 class="text-center">Posts</h3><br>
+
+    <div class="row bg-dark text-white">
+        {% for post in user_instance.posts.all %}
+            
+        <div class="col-sm-3 mb-3 mb-sm-4 ">
+            <div class="card  text-bg-light border border-success">
+                <div class="card-body text-white">
+                    <h5 class="card-title text-primary fs-5 fw-normal">{{ post.title|truncatewords:15 }}</h5><br>
+                    <h6 class="card-subtitle mb-2 text-primary-emphasis">Published {{ post.created|timesince }} ago</h6>
+                    <h6 class="card-subtitle mb-2 text-dark">{{ post.comment_count }}, {{ post.likes_count }}</h6>
+                    <h6 class="card-subtitle mb-2"><a href="{{ post.get_user_profile_url }}">{{post.user.username}}</a></h6><br>
+                    <a href="{{ post.get_absolute_url }}" class="card-link btn btn-success">Detail</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}          
+    </div>
+{% endblock content %}
+    
