@@ -15,7 +15,6 @@ class HomeView(View):
         if search:
             posts = Post.objects.filter(
                 Q(content__contains=search) | Q(title__contains=search))
-            # search.num_page = search
         else:
             posts = Post.objects.all()
         can_search = True
