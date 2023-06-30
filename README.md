@@ -3,20 +3,16 @@
 
 # Django store
 
-This is a blog with django and bootstrap
+This is a blog with django , bootstrap
+and Rest API's
 
 ## Usage
 
 Usage with docker 
 
 ```bash
-## pull from docker hub and run
-docker run -p 8000:8000  aryoaryo80/django-blog:1.0
-
-## or
-
 ## build from . and run
-git clone https://github.com/aryoaryo80/djnago-blog.git
+git clone https://github.com/aryoaryo80/django-blog.git
 cd django-blog
 docker image build . -t django-blog:1.0 && docker run -p 8000:8000 django-blog:1.0
 

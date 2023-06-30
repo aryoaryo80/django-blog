@@ -127,7 +127,6 @@ class PostUpdateView(LoginRequiredMixin, View):
             post = form.save(commit=False)
             post.slug = slugify(form.cleaned_data['title'][:100])
             post.save()
-            print(post)
             messages.success(request, 'your post updated successfully')
             return redirect('posts:detail', post.slug)
 
